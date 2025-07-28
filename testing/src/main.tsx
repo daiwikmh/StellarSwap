@@ -4,17 +4,17 @@ import './index.css'
 import App from './App.tsx'
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { http, WagmiProvider, createConfig } from "wagmi";
-import {  citreaTestnet } from "wagmi/chains";
+import {  holesky } from "wagmi/chains";
 import { metaMask } from "wagmi/connectors";
 
 
 
 const config = createConfig({
   ssr: true, // Make sure to enable this for server-side rendering (SSR) applications.
-  chains: [citreaTestnet],
+  chains: [holesky],
   connectors: [metaMask()],
   transports: {
-    [citreaTestnet.id]: http(),
+    [holesky.id]: http(),
   },
 });
 
