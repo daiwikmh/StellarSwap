@@ -1,34 +1,30 @@
-import { initiate, claim, refund } from "../components/crosschain/stellar";
-import { Asset } from "@stellar/stellar-sdk";
+import { Address } from "@stellar/stellar-sdk";
+import { initiate, claim } from "../components/crosschain/stellar";
+import { cn } from "@/lib/utils";
 
 
 const caller = "GBJDZIKRY6KI7U7FETQWBAKNOPRW6NJEAO6WM2MQ3OOGOWOYXZYHG6B3"; 
 const receiver = "GCRFJ72PLMERENWP2AGIEZOSZKEU4CLS27PKGFFZUE3EKSYDP36EOJC3"; 
 
-const XLM_TOKEN_ADDRESS = 'CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQAHHGKPMBWB';
+const XLM_TOKEN_ADDRESS = "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC";
 
-const amount = 100n; 
-const hashlock = "a948904f2f0f479b8f8197694b30184b0d2ed1c1cd2a1ec0fb85d299a192a447";
-const timelock = Math.floor(Date.now() / 1000) + 3600; 
-
+const amount = 1; 
+const hashlock = "486ea46224d1bb4fb680f34f7c9ad96a8f24ec88be73ea8e5a6c65260e9cb8a7";
+const timelock = 1761866616; 
+const swapId = "02ab72941f6c17a465bb070d2e6816bdb7d55667e7522a4c9ae4ea48bd03e0a3";
+const preimage="776f726c64"
 
 async function testXLMTransfer() {
   console.log('🚀 Testing XLM HTLC Transfer...');
   
   try {
     console.log('⭐ Initiating XLM HTLC...');
-    const initiateResult = await initiate(
-      caller,
-      receiver, 
-      XLM_TOKEN_ADDRESS, // Native XLM
-      amount,
-      hashlock,
-      timelock
-    );
+    console.log('📜 Parameters:',caller,receiver,XLM_TOKEN_ADDRESS,amount,hashlock,timelock);
+
     
-    console.log('✅ Initiate result:', initiateResult);
+    const claimResult = await claim(receiver, swapId, preimage);
     
-    if (initiateResult === "HTLC initiated successfully") {
+    if (claimResult === "HTLC initiated successfully") {
       console.log('🎉 XLM HTLC created successfully!');
       console.log('💰 Amount locked:XLM');
       console.log('🔒 Hashlock:', hashlock);
@@ -45,7 +41,7 @@ async function testXLMTransfer() {
       console.log('✅ Claim result:', claimResult);
      
     } else {
-      console.error('❌ Failed to initiate:', initiateResult);
+      console.error('❌ Failed to initiate:', claimResult);
     }
    
   } catch (error) {
