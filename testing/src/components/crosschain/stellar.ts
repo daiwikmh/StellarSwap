@@ -208,25 +208,57 @@ const contractInt = async (caller: string, functName: string, values: any) => {
     });
     console.log(`Transaction result for ${functName}:`, txResult);
     // If we got a hash, return immediately with success
-    await sleep(3000);
+let txStatus;
+    const pollEnd = Date.now() + 100; // 60 seconds timeout
+    while (Date.now() < pollEnd) {
+      txStatus = await server.getTransaction(txResult.hash).catch((err) => {
+        console.warn(`Failed to fetch transaction status: ${err.message}`);
+        return null;
+      });
+      if (txStatus && txStatus.status !== "NOT_FOUND") {
+        break;
+      }
+      console.log(`Transaction ${txResult.hash} still pending, waiting...`);
+      await sleep(50); // Wait 5 seconds between polls
+    }
+    // Only fetch events for initiate function to extract swapId
+    if (functName === "initiate") {
+      try {
+        const events = await fetchSwapEventsFromLedger(txResult.latestLedger, 360000, 5000, txResult.hash);
 
-    try {
-  const events = await fetchSwapEventsFromLedger(txResult.latestLedger, contractAddress, );
-
-
-  console.log("✅ Swap Events Found:", events);
-} catch (e) {
-  console.error(
-    "❌ Error fetching events:",
-    e instanceof Error ? e.message : String(e)
-  );
-}
+        console.log("✅ Swap Events Found:", events);
+        
+        let extractedSwapId = null;
+        if (events && events.length > 0) {
+          const matchingEvent = events.find(event => event.transactionHash === txResult.hash);
+          if (matchingEvent) {
+            extractedSwapId = matchingEvent.swapId;
+            console.log("🆔 Extracted Swap ID from event:", extractedSwapId);
+          }
+        }
+        
+        return {
+          success: true,
+          hash: txResult.hash,
+          status: "PENDING",
+          startLedger: txResult.latestLedger,
+          swapId: extractedSwapId,
+        };
+      } catch (e) {
+        console.error(
+          "❌ Error fetching events:",
+          e instanceof Error ? e.message : String(e)
+        );
+      }
+    }
+    // Fallback if event fetching fails but we have a hash
     if (txResult.hash) {
       return {
         success: true,
         hash: txResult.hash,
         status: "PENDING",
         startLedger: txResult.latestLedger,
+        swapId: null, // No swapId if events couldn't be fetched
       };
     }
 

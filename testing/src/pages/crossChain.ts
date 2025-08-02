@@ -1,4 +1,4 @@
-import { initiate as stellarInitiate, claim as stellarClaim } from "../components/crosschain/stellar";
+import { initiateStellarHTLC, claimStellarHTLC } from "./stellarSwap";
 import { initiateEthereumHTLC, claimEthereumHTLC } from "./ethereumSwap";
 import 'dotenv/config';
 
@@ -7,23 +7,28 @@ const caller = "GBJDZIKRY6KI7U7FETQWBAKNOPRW6NJEAO6WM2MQ3OOGOWOYXZYHG6B3"; // Us
 const stellarReceiver = "GCRFJ72PLMERENWP2AGIEZOSZKEU4CLS27PKGFFZUE3EKSYDP36EOJC3"; // Resolver getting XLM on stellar
 const ethereumReceiver = "0x9e1747D602cBF1b1700B56678F4d8395a9755235"; // Ethereum address which will receive ETH
 
-const XLM_TOKEN_ADDRESS = "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC";
-const stellarAmount = 1; // 1 XLM
-const ethereumAmount = "0.01"; // 0.01 ETH
-const hashlock = "486ea46224d1bb4fb680f34f7c9ad96a8f24ec88be73ea8e5a6c65260e9cb8a7"; // SHA256("world")
+const ethereumAmount = "0.1"; // 0.01 ETH
 // Dynamic timelocks based on current time
 const currentTime = Math.floor(Date.now() / 1000);
-const stellarTimelock = currentTime + 300; // 5 minutes from now
 const ethereumTimelock = currentTime + 310; // 5 minutes 10 seconds from now (safety margin)
-const swapId = "02ab72941f6c17a465bb070d2e6816bdb7d55667e7522a4c9ae4ea48bd03e0a3";
-const preimage = "776f726c64"; // "world" in hex
 
-interface StepResult {
-  success: boolean;
-  hash?: string;
-  message: string;
-  data?: any;
-}
+// These will be dynamically set from stellarSwap.ts
+let stellarSwapId: string | undefined = "";
+let stellarHashlock: string | undefined = "";
+let stellarPreimage: string | undefined = "";
+
+// Transaction hashes for final summary
+let stellarInitiateHash = "";
+let stellarClaimHash = "";
+let ethereumInitiateHash = "";
+let ethereumClaimHash = "";
+
+// interface StepResult {
+//   success: boolean;
+//   hash?: string;
+//   message: string;
+//   data?: any;
+// }
 
 async function runCrossChainHTLC(): Promise<void> {
   console.log('🌟 Starting Complete Cross-Chain HTLC Workflow');
@@ -33,32 +38,26 @@ async function runCrossChainHTLC(): Promise<void> {
   try {
     // Step 1: Stellar Initiate
     console.log('🚀 Step 1: Initiating Stellar HTLC...');
-    console.log('📜 Parameters:');
-    console.log('  Caller (User):', caller);
-    console.log('  Receiver (Resolver):', stellarReceiver);
-    console.log('  Amount:', stellarAmount, 'XLM');
-    console.log('  Hashlock:', hashlock);
-    console.log('  Timelock:', stellarTimelock);
-
-    const stellarInitiateResult = await stellarInitiate(
-      caller,
-      stellarReceiver,
-      XLM_TOKEN_ADDRESS,
-      BigInt(stellarAmount),
-      Buffer.from(hashlock, "hex"),
-      stellarTimelock
-    );
+    
+    const stellarInitiateResult = await initiateStellarHTLC();
 
     console.log('📝 Stellar Initiate Result:', stellarInitiateResult);
 
     // Check if stellar initiate was successful
-    if (typeof stellarInitiateResult !== 'string' || stellarInitiateResult.startsWith('Error')) {
-      console.error('❌ Stellar initiate failed:', stellarInitiateResult);
+    if (!stellarInitiateResult.success) {
+      console.error('❌ Stellar initiate failed:', stellarInitiateResult.message);
       return;
     }
 
+    // Extract values from stellarSwap.ts result
+    stellarSwapId = stellarInitiateResult.swapId;
+    stellarHashlock = stellarInitiateResult.hashlock;
+    stellarPreimage = stellarInitiateResult.preimage;
+    stellarInitiateHash = stellarInitiateResult.hash ?? "";
+
     console.log('✅ Step 1 Completed: Stellar HTLC initiated successfully!');
-    console.log('🆔 Stellar Swap ID:', swapId);
+    console.log('🆔 Stellar Swap ID:', stellarSwapId);
+    console.log('🔒 Hashlock:', stellarHashlock);
     console.log('');
 
     // Step 2: Ethereum Initiate
@@ -67,10 +66,10 @@ async function runCrossChainHTLC(): Promise<void> {
     console.log('  Resolver (Relayer Account): Will initiate');
     console.log('  Receiver:', ethereumReceiver);
     console.log('  Amount:', ethereumAmount, 'ETH');
-    console.log('  Hashlock:', hashlock);
+    console.log('  Hashlock:', stellarHashlock);
     console.log('  Timelock:', ethereumTimelock);
     console.log('  Stellar Destination:', stellarReceiver);
-    console.log('  Stellar Swap ID:', swapId);
+    console.log('  Stellar Swap ID:', stellarSwapId);
 
     const ethereumInitiateResult = await initiateEthereumHTLC();
 
@@ -78,6 +77,8 @@ async function runCrossChainHTLC(): Promise<void> {
       console.error('❌ Ethereum initiate failed:', ethereumInitiateResult.message);
       return;
     }
+
+    ethereumInitiateHash = ethereumInitiateResult.txHash;
 
     console.log('✅ Step 2 Completed: Ethereum HTLC initiated successfully!');
     console.log('📝 Transaction Hash:', ethereumInitiateResult.txHash);
@@ -92,14 +93,10 @@ async function runCrossChainHTLC(): Promise<void> {
     console.log('🚀 Step 3: Claiming Stellar HTLC...');
     console.log('📜 Parameters:');
     console.log('  Claimer (Resolver):', stellarReceiver);
-    console.log('  Swap ID:', swapId);
-    console.log('  Preimage:', preimage);
+    console.log('  Swap ID:', stellarSwapId);
+    console.log('  Preimage:', stellarPreimage);
 
-    const stellarClaimResult = await stellarClaim(
-      stellarReceiver,
-      swapId,
-      preimage
-    );
+    const stellarClaimResult = await claimStellarHTLC();
 
     console.log('📝 Stellar Claim Result:', stellarClaimResult);
 
@@ -108,9 +105,11 @@ async function runCrossChainHTLC(): Promise<void> {
       return;
     }
 
+    stellarClaimHash = stellarClaimResult.hash;
+
     console.log('✅ Step 3 Completed: Stellar HTLC claimed successfully!');
     console.log('📝 Transaction Hash:', stellarClaimResult.hash);
-    console.log('💰 Resolver received:', stellarAmount, 'XLM');
+    console.log('💰 Resolver received: 1 XLM');
     console.log('');
 
     // Wait a moment before final step
@@ -122,7 +121,7 @@ async function runCrossChainHTLC(): Promise<void> {
     console.log('📜 Parameters:');
     console.log('  Claimer (Receiver Wallet):', ethereumReceiver);
     console.log('  Swap ID: From Ethereum logs');
-    console.log('  Preimage:', preimage);
+    console.log('  Preimage:', stellarPreimage);
 
     const ethereumClaimResult = await claimEthereumHTLC();
 
@@ -130,6 +129,8 @@ async function runCrossChainHTLC(): Promise<void> {
       console.error('❌ Ethereum claim failed:', ethereumClaimResult.message);
       return;
     }
+
+    ethereumClaimHash = ethereumClaimResult.txHash;
 
     console.log('✅ Step 4 Completed: Ethereum HTLC claimed successfully!');
     console.log('📝 Transaction Hash:', ethereumClaimResult.txHash);
@@ -146,11 +147,29 @@ async function runCrossChainHTLC(): Promise<void> {
     console.log('✅ Step 4: Ethereum HTLC claimed (User got ETH)');
     console.log('');
     console.log('🔄 Cross-chain swap completed:');
-    console.log(`  • User: Sent ${stellarAmount} XLM → Received ${ethereumAmount} ETH`);
-    console.log(`  • Resolver: Sent ${ethereumAmount} ETH → Received ${stellarAmount} XLM`);
+    console.log(`  • User: Sent 1 XLM → Received ${ethereumAmount} ETH`);
+    console.log(`  • Resolver: Sent ${ethereumAmount} ETH → Received 1 XLM`);
     console.log('');
-    console.log('🗝️  Preimage used:', preimage);
-    console.log('🔒 Hashlock:', hashlock);
+    console.log('🗝️  Preimage used:', stellarPreimage);
+    console.log('🔒 Hashlock:', stellarHashlock);
+    console.log('');
+    
+    // Transaction Explorer Links
+    console.log('🔍 TRANSACTION EXPLORER LINKS:');
+    console.log('');
+    console.log('📊 Stellar Transactions (Testnet):');
+    console.log(`  🚀 Stellar Initiate: https://stellar.expert/explorer/testnet/search?term=${stellarInitiateHash}`);
+    console.log(`  🎯 Stellar Claim: https://stellar.expert/explorer/testnet/search?term=${stellarClaimHash}`);
+    console.log('');
+    console.log('📊 Ethereum Transactions (Holesky Testnet):');
+    console.log(`  🚀 Ethereum Initiate: https://holesky.etherscan.io/tx/${ethereumInitiateHash}`);
+    console.log(`  🎯 Ethereum Claim: https://holesky.etherscan.io/tx/${ethereumClaimHash}`);
+    console.log('');
+    console.log('📋 Transaction Summary:');
+    console.log('  Stellar Initiate Hash:', stellarInitiateHash);
+    console.log('  Stellar Claim Hash:', stellarClaimHash);
+    console.log('  Ethereum Initiate Hash:', ethereumInitiateHash);
+    console.log('  Ethereum Claim Hash:', ethereumClaimHash);
 
   } catch (error) {
     console.error('💥 Cross-chain HTLC workflow failed:', error);
@@ -171,9 +190,8 @@ function displayParameters() {
   console.log('🌟 Stellar Side:');
   console.log('  Caller (User):', caller);
   console.log('  Receiver (Resolver):', stellarReceiver);
-  console.log('  Token:', XLM_TOKEN_ADDRESS);
-  console.log('  Amount:', stellarAmount, 'XLM');
-  console.log('  Timelock:', stellarTimelock, '(' + new Date(stellarTimelock * 1000).toISOString() + ')');
+  console.log('  Amount: 1 XLM');
+  console.log('  Timelock: Dynamic (5 minutes from initiation)');
   console.log('');
   console.log('🌉 Ethereum Side:');
   console.log('  Relayer (Resolver): From ETHEREUM_RELAYER_PRIVATE_KEY');
@@ -182,9 +200,9 @@ function displayParameters() {
   console.log('  Timelock:', ethereumTimelock, '(' + new Date(ethereumTimelock * 1000).toISOString() + ')');
   console.log('');
   console.log('🔐 Shared Parameters:');
-  console.log('  Hashlock:', hashlock);
-  console.log('  Preimage:', preimage, '("world" in hex)');
-  console.log('  Swap ID:', swapId);
+  console.log('  Hashlock: Generated dynamically from stellarSwap.ts');
+  console.log('  Preimage: Generated dynamically from stellarSwap.ts');
+  console.log('  Swap ID: Extracted from Stellar events');
   console.log('');
 }
 
@@ -196,13 +214,12 @@ export {
   caller,
   stellarReceiver,
   ethereumReceiver,
-  stellarAmount,
   ethereumAmount,
-  hashlock,
-  stellarTimelock,
   ethereumTimelock,
-  swapId,
-  preimage
+  // Dynamic values (set during execution)
+  stellarSwapId,
+  stellarHashlock,
+  stellarPreimage
 };
 
 // Run if executed directly

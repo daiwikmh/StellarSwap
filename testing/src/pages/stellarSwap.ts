@@ -72,7 +72,7 @@ async function initiateStellarHTLC() {
     // Check the new structure - the result comes directly from contractInt
     if (initiateResult && initiateResult.success && initiateResult.hash) {
       stellarSwapHash = initiateResult.hash;
-      stellarSwapId = initiateResult.hash; // Use transaction hash as swap ID
+      stellarSwapId = initiateResult.swapId || initiateResult.hash; // Use swapId from events, fallback to hash
       
       console.log('✅ Stellar HTLC initiated successfully!');
       console.log('  Status:', initiateResult.status);
@@ -83,6 +83,7 @@ async function initiateStellarHTLC() {
       console.log('📋 HTLC Details:');
       console.log('  💰 Amount locked:', amount, 'XLM');
       console.log('  🆔 Swap ID (for claim):', stellarSwapId);
+      console.log('  📋 Event-based Swap ID:', initiateResult.swapId || 'Not available');
       console.log('  🔒 Hashlock:', hashlock);
       console.log('  🗝️  Preimage (secret):', preimage);
       console.log('  ⏰ Expires:', new Date(timelock * 1000).toISOString());
@@ -127,7 +128,7 @@ async function claimStellarHTLC() {
     console.log('  Swap ID (from initiate hash):', stellarSwapId);
     console.log('  Preimage:', preimage);
 
-    const claimResult = await claim(receiver, "43011c47b839db44d3ad1ebb451dba5214b50c275dea406768d6c3b905de483a", "7374656c6c61725f7374656c6c61725f34373137");
+    const claimResult = await claim(receiver, stellarSwapId, preimage);
     
     if (claimResult.success) {
       console.log('✅ Stellar HTLC claimed successfully!');
