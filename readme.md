@@ -1,4 +1,4 @@
-# 🌉 CROSSINCH+ BRIDGE -  Cross-Chain Atomic Swap Bridge
+# 🌉 CROSSINCH+ -  Cross-Chain Atomic Swap Bridge
 
 ## 🚀 Project Overview
 
@@ -206,5 +206,6 @@ The integration connects:
 4. **Institutional Trading**: Large volume cross-chain swaps with limit order benefits
 5. **Bridge Infrastructure**: Foundation for multi-chain DeFi protocols
 ---
+
 
 **This is a cross-chain bridge that safely moves  cryptocurrency between Stellar and Ethereum networks while maintaining atomic swap guarantees.**
