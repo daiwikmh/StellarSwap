@@ -25,13 +25,16 @@ class RealTransferTest {
         console.log("═══════════════════════════════════════");
         
         try {
-            const transferAmount = ethers.parseEther("0.001"); // 0.001 ETH
+            // Dynamic transfer amount from environment variables (set by bridge server)
+            const ethAmountFromEnv = parseFloat(process.env.BRIDGE_ETH_AMOUNT) || 0.001;
+            const transferAmount = ethers.parseEther(ethAmountFromEnv.toString());
             const secret = `real-transfer-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
             const hashlock = ethers.keccak256(ethers.toUtf8Bytes(secret));
             const timelock = Math.floor(Date.now() / 1000) + 7200; // 2 hours
             
-            console.log("🎯 Test Parameters:");
-            console.log("Transfer Amount:", ethers.formatEther(transferAmount), "ETH");
+            console.log("🎯 Dynamic Parameters (from frontend):");
+            console.log("Transfer Amount:", ethers.formatEther(transferAmount), "ETH (from env:", process.env.BRIDGE_ETH_AMOUNT, ")");
+            console.log("XLM Amount:", process.env.BRIDGE_XLM_AMOUNT || "N/A", "XLM (simulated)");
             console.log("Secret:", secret);
             console.log("Hashlock:", hashlock);
             
@@ -251,7 +254,9 @@ class RealTransferTest {
         // For this test, we'll do a real ETH transfer to demonstrate balance change
         console.log("🔄 Executing real ETH transfer to user...");
         
-        const transferAmount = ethers.parseEther("0.001");
+        // Use dynamic amount from environment variable
+        const ethAmountFromEnv = parseFloat(process.env.BRIDGE_ETH_AMOUNT) || 0.001;
+        const transferAmount = ethers.parseEther(ethAmountFromEnv.toString());
         
         // Relayer sends ETH to user (simulating successful HTLC claim)
         const transferTx = await this.relayerWallet.sendTransaction({

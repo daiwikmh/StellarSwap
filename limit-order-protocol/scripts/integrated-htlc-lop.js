@@ -143,7 +143,7 @@ class HTLCLimitOrderBridge {
         // Update predicate with actual order hash
         const predicateCalldata = htlcPredicateInterface.encodeFunctionData("validateHTLC", [
             orderHash,
-            "0x" // Placeholder for preimage
+            "0x" 
         ]);
         
         order.predicate = predicateCalldata;
@@ -341,14 +341,40 @@ class HTLCLimitOrderBridge {
 // Export for use in other modules
 module.exports = { HTLCLimitOrderBridge, config };
 
-// CLI execution
+// CLI execution with dynamic parameters
 if (require.main === module) {
     async function main() {
+        // Get dynamic parameters from environment variables (set by bridge server)
+        const xlmAmount = parseFloat(process.env.BRIDGE_XLM_AMOUNT) || 1000; // Default 1000 XLM
+        const ethAmount = parseFloat(process.env.BRIDGE_ETH_AMOUNT) || 0.03; // Default 0.03 ETH
+        
+        console.log('🚀 REAL CROSS-CHAIN ATOMIC SWAP EXECUTION');
+        console.log('═══════════════════════════════════════════════════');
+        console.log('💰 Dynamic Parameters (from frontend):');
+        console.log(`XLM Amount: ${xlmAmount} (from env: ${process.env.BRIDGE_XLM_AMOUNT})`);
+        console.log(`ETH Amount: ${ethAmount} (from env: ${process.env.BRIDGE_ETH_AMOUNT})`);
+        console.log('═══════════════════════════════════════════════════');
+        
         const bridge = new HTLCLimitOrderBridge();
         
-        // Execute demo swap: 1000 XLM → 0.03 ETH
-        await bridge.executeCompleteSwap(1000, 0.03);
+        // Execute real swap with dynamic amounts
+        const result = await bridge.executeCompleteSwap(xlmAmount, ethAmount);
+        
+        if (result.success) {
+            console.log('\n🎉 REAL CROSS-CHAIN ATOMIC SWAP COMPLETED SUCCESSFULLY!');
+            console.log('🔍 Transaction Explorer URLs:');
+            console.log(`- Stellar HTLC: https://stellar.expert/explorer/testnet/search?term=${result.stellar.stellarTxHash}`);
+            console.log(`- Ethereum Registration: https://holesky.etherscan.io/tx/${result.order.registrationTx}`);
+            console.log(`- Stellar Claim: https://stellar.expert/explorer/testnet/search?term=${result.claim.claimTxHash}`);
+            console.log(`- Ethereum Fill: https://holesky.etherscan.io/tx/${result.fill.fillTxHash}`);
+        } else {
+            console.error('❌ Real cross-chain swap failed:', result.error);
+            process.exit(1);
+        }
     }
     
-    main().catch(console.error);
+    main().catch(error => {
+        console.error('❌ Bridge execution failed:', error);
+        process.exit(1);
+    });
 }

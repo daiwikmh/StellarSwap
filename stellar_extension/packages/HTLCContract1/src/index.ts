@@ -1,27 +1,43 @@
 import { Buffer } from "buffer";
+import { Address } from '@stellar/stellar-sdk';
 import {
   AssembledTransaction,
   Client as ContractClient,
   ClientOptions as ContractClientOptions,
   MethodOptions,
+  Result,
   Spec as ContractSpec,
-} from "@stellar/stellar-sdk/contract";
-import type { u64, i128 } from "@stellar/stellar-sdk/contract";
-export * from "@stellar/stellar-sdk";
-export * as contract from "@stellar/stellar-sdk/contract";
-export * as rpc from "@stellar/stellar-sdk/rpc";
+} from '@stellar/stellar-sdk/contract';
+import type {
+  u32,
+  i32,
+  u64,
+  i64,
+  u128,
+  i128,
+  u256,
+  i256,
+  Option,
+  Typepoint,
+  Duration,
+} from '@stellar/stellar-sdk/contract';
+export * from '@stellar/stellar-sdk'
+export * as contract from '@stellar/stellar-sdk/contract'
+export * as rpc from '@stellar/stellar-sdk/rpc'
 
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   //@ts-ignore Buffer exists
   window.Buffer = window.Buffer || Buffer;
 }
+
 
 export const networks = {
   testnet: {
     networkPassphrase: "Test SDF Network ; September 2015",
     contractId: "CCJXYH3FWC7HPET55VBFZUUBHHQV7OBVCJNMZLP76Y4V55PYBL5NFF67",
-  },
-} as const;
+  }
+} as const
+
 
 export interface Swap {
   amount: i128;
@@ -33,91 +49,69 @@ export interface Swap {
   token_address: string;
 }
 
-export type DataKey = { tag: "Swap"; values: readonly [Buffer] };
+export type DataKey = {tag: "Swap", values: readonly [Buffer]};
 
 export interface Client {
   /**
    * Construct and simulate a initiate transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  initiate: (
-    {
-      sender,
-      receiver,
-      token_address,
-      amount,
-      hashlock,
-      timelock,
-    }: {
-      sender: string;
-      receiver: string;
-      token_address: string;
-      amount: i128;
-      hashlock: Buffer;
-      timelock: u64;
-    },
-    options?: {
-      /**
-       * The fee to pay for the transaction. Default: BASE_FEE
-       */
-      fee?: number;
+  initiate: ({sender, receiver, token_address, amount, hashlock, timelock}: {sender: string, receiver: string, token_address: string, amount: i128, hashlock: Buffer, timelock: u64}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
 
-      /**
-       * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
-       */
-      timeoutInSeconds?: number;
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
 
-      /**
-       * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
-       */
-      simulate?: boolean;
-    }
-  ) => Promise<AssembledTransaction<null>>;
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<null>>
 
   /**
    * Construct and simulate a claim transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  claim: (
-    { swap_id, preimage }: { swap_id: Buffer; preimage: Buffer },
-    options?: {
-      /**
-       * The fee to pay for the transaction. Default: BASE_FEE
-       */
-      fee?: number;
+  claim: ({swap_id, preimage}: {swap_id: Buffer, preimage: Buffer}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
 
-      /**
-       * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
-       */
-      timeoutInSeconds?: number;
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
 
-      /**
-       * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
-       */
-      simulate?: boolean;
-    }
-  ) => Promise<AssembledTransaction<null>>;
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<null>>
 
   /**
    * Construct and simulate a refund transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
-  refund: (
-    { swap_id }: { swap_id: Buffer },
-    options?: {
-      /**
-       * The fee to pay for the transaction. Default: BASE_FEE
-       */
-      fee?: number;
+  refund: ({swap_id}: {swap_id: Buffer}, options?: {
+    /**
+     * The fee to pay for the transaction. Default: BASE_FEE
+     */
+    fee?: number;
 
-      /**
-       * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
-       */
-      timeoutInSeconds?: number;
+    /**
+     * The maximum amount of time to wait for the transaction to complete. Default: DEFAULT_TIMEOUT
+     */
+    timeoutInSeconds?: number;
 
-      /**
-       * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
-       */
-      simulate?: boolean;
-    }
-  ) => Promise<AssembledTransaction<null>>;
+    /**
+     * Whether to automatically simulate the transaction when constructing the AssembledTransaction. Default: true
+     */
+    simulate?: boolean;
+  }) => Promise<AssembledTransaction<null>>
+
 }
 export class Client extends ContractClient {
   static async deploy<T = Client>(
@@ -132,23 +126,21 @@ export class Client extends ContractClient {
         format?: "hex" | "base64";
       }
   ): Promise<AssembledTransaction<T>> {
-    return ContractClient.deploy(null, options);
+    return ContractClient.deploy(null, options)
   }
   constructor(public readonly options: ContractClientOptions) {
     super(
-      new ContractSpec([
-        "AAAAAQAAAAAAAAAAAAAABFN3YXAAAAAHAAAAAAAAAAZhbW91bnQAAAAAAAsAAAAAAAAAB2NsYWltZWQAAAAAAQAAAAAAAAAIaGFzaGxvY2sAAAAOAAAAAAAAAAhyZWNlaXZlcgAAABMAAAAAAAAABnNlbmRlcgAAAAAAEwAAAAAAAAAIdGltZWxvY2sAAAAGAAAAAAAAAA10b2tlbl9hZGRyZXNzAAAAAAAAEw==",
+      new ContractSpec([ "AAAAAQAAAAAAAAAAAAAABFN3YXAAAAAHAAAAAAAAAAZhbW91bnQAAAAAAAsAAAAAAAAAB2NsYWltZWQAAAAAAQAAAAAAAAAIaGFzaGxvY2sAAAAOAAAAAAAAAAhyZWNlaXZlcgAAABMAAAAAAAAABnNlbmRlcgAAAAAAEwAAAAAAAAAIdGltZWxvY2sAAAAGAAAAAAAAAA10b2tlbl9hZGRyZXNzAAAAAAAAEw==",
         "AAAAAgAAAAAAAAAAAAAAB0RhdGFLZXkAAAAAAQAAAAEAAAAAAAAABFN3YXAAAAABAAAADg==",
         "AAAAAAAAAAAAAAAIaW5pdGlhdGUAAAAGAAAAAAAAAAZzZW5kZXIAAAAAABMAAAAAAAAACHJlY2VpdmVyAAAAEwAAAAAAAAANdG9rZW5fYWRkcmVzcwAAAAAAABMAAAAAAAAABmFtb3VudAAAAAAACwAAAAAAAAAIaGFzaGxvY2sAAAAOAAAAAAAAAAh0aW1lbG9jawAAAAYAAAAA",
         "AAAAAAAAAAAAAAAFY2xhaW0AAAAAAAACAAAAAAAAAAdzd2FwX2lkAAAAAA4AAAAAAAAACHByZWltYWdlAAAADgAAAAA=",
-        "AAAAAAAAAAAAAAAGcmVmdW5kAAAAAAABAAAAAAAAAAdzd2FwX2lkAAAAAA4AAAAA",
-      ]),
+        "AAAAAAAAAAAAAAAGcmVmdW5kAAAAAAABAAAAAAAAAAdzd2FwX2lkAAAAAA4AAAAA" ]),
       options
-    );
+    )
   }
   public readonly fromJSON = {
     initiate: this.txFromJSON<null>,
-    claim: this.txFromJSON<null>,
-    refund: this.txFromJSON<null>,
-  };
+        claim: this.txFromJSON<null>,
+        refund: this.txFromJSON<null>
+  }
 }

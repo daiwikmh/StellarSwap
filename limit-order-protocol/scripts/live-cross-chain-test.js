@@ -39,16 +39,16 @@ class LiveCrossChainTest {
         console.log("═══════════════════════════════════════");
         
         try {
-            // Test parameters - using realistic amounts
-            const xlmAmount = 100; // 100 XLM
-            const ethAmount = 0.001; // 0.001 ETH (small amount for testing)
+            // Dynamic parameters from environment variables (set by bridge server)
+            const xlmAmount = parseFloat(process.env.BRIDGE_XLM_AMOUNT) || 100; // Default 100 XLM
+            const ethAmount = parseFloat(process.env.BRIDGE_ETH_AMOUNT) || 0.001; // Default 0.001 ETH
             const secret = `live-test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
             const hashlock = ethers.keccak256(ethers.toUtf8Bytes(secret));
             const timelock = Math.floor(Date.now() / 1000) + 3600; // 1 hour
             
-            console.log("💰 Test Parameters:");
-            console.log("XLM Amount:", xlmAmount);
-            console.log("ETH Amount:", ethAmount);
+            console.log("💰 Dynamic Parameters (from frontend):");
+            console.log("XLM Amount:", xlmAmount, "(from env:", process.env.BRIDGE_XLM_AMOUNT, ")");
+            console.log("ETH Amount:", ethAmount, "(from env:", process.env.BRIDGE_ETH_AMOUNT, ")");
             console.log("Secret:", secret);
             console.log("Hashlock:", hashlock);
             console.log("Timelock:", new Date(timelock * 1000).toLocaleString());

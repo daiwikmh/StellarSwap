@@ -112,7 +112,7 @@ contract EthereumHTLC is ReentrancyGuard {
     }
 
     /**
-     * @dev Claim tokens with secret (mirrors your Stellar claim function)
+     * @dev Claim tokens with secret 
      */
     function claim(
         bytes32 _swapId,
@@ -155,12 +155,9 @@ contract EthereumHTLC is ReentrancyGuard {
         require(block.timestamp >= swap.timelock, "Timelock not expired");
         require(msg.sender == swap.sender, "Only sender can refund");
 
-        // Mark as claimed to prevent re-entry
         swap.claimed = true;
 
-        // Transfer tokens back to sender
         if (swap.tokenAddress == address(0)) {
-            // Refund ETH
             swap.sender.transfer(swap.amount);
         } else {
             // Refund ERC20

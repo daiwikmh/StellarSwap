@@ -9,7 +9,7 @@ const testConfig = {
     htlcAddress: process.env.STELLAR_HTLC_ADDRESS || '',
     privateKey: process.env.STELLAR_PRIVATE_KEY || '',
     receiverKey: process.env.RECEIVER_PRIVATE_KEY || '',
-    rpcUrl: process.env.STELLAR_RPC_URL || 'https://horizon-testnet.stellar.org',
+    rpcUrl: process.env.STELLAR_RPC_URL || 'https://soroban-testnet.stellar.org',
     xlmAddress: process.env.XLM_ADDRESS || ''
   },
   ethereum: {
