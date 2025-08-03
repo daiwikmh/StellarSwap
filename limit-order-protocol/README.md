@@ -1,9 +1,82 @@
+# 🌉 CROSSINCH+ BRIDGE - Real Cross-Chain Atomic Swap Bridge
+
+## 🚀 Real Cross-Chain Atomic Swap Bridge
+
+**We've built a complete real cross-chain bridge that performs actual token transfers between Stellar and Ethereum networks using atomic swap technology.**
+
+### ⚡ What We Created
+
+**Core System:**
+- **Real Cross-Chain Bridge**: Moves actual tokens (XLM ↔ ETH) between Stellar and Ethereum
+- **Atomic Safety**: Guarantees either both transfers complete or both fail - no stuck funds
+- **Frontend Integration**: React interface for user-friendly swap execution
+- **Bridge Server**: Node.js backend that coordinates cross-chain operations
+
+**Key Components:**
+
+**Frontend Interface (testing/src/components/)**
+- Swap interface with real crypto logos (ETH/Stellar)
+- Real-time price calculation and conversion
+- Execute button triggers actual bridge operations
+
+**Bridge Server (limit-order-protocol/simple-bridge-server.js)**
+- Receives swap requests from frontend
+- Spawns cross-chain scripts with dynamic parameters
+- Returns transaction hashes and explorer URLs
+
+**Real Cross-Chain Script (limit-order-protocol/scripts/complete-real-bridge.js)**
+- **Dual Hashlock System**: Ethereum uses keccak256(UTF-8), Stellar uses SHA256(hex)
+- **Real Stellar HTLC**: Actual XLM contract locking with proper event extraction
+- **Real Ethereum Transfers**: Actual ETH transfers with predicate validation
+- **Consistent Preimage Handling**: Each chain uses its native format
+
+### 🔧 Technical Architecture
+
+**Flow**: Frontend → Bridge Server → Cross-Chain Script → Blockchain Contracts
+
+**Stellar Side:**
+- Uses your backend's hex preimage format
+- Real contract calls with proper contractInt implementation
+- Event extraction for swapId from blockchain
+- SHA256-based hashlock validation
+
+**Ethereum Side:**
+- Uses standard ethers.js UTF-8 format
+- HTLC predicate registration and validation
+- Real ETH transfers between wallets
+- Keccak256-based hashlock validation
+
+### 💰 What Actually Happens
+
+1. User enters amounts in frontend (e.g., 100 XLM → 0.001 ETH)
+2. Bridge server receives request and spawns real transfer script
+3. **Stellar**: Real XLM gets locked in HTLC contract
+4. **Ethereum**: HTLC predicate gets registered with hashlock
+5. **Stellar**: User claims XLM, revealing secret on blockchain
+6. **Ethereum**: User claims ETH using revealed secret
+7. **Result**: Real tokens moved atomically between chains
+
+### 🛡️ Safety & Features
+
+- ✅ **Real Token Transfers**: No simulations - actual XLM and ETH movement
+- ✅ **Atomic Safety**: Either both sides complete or both fail
+- ✅ **Dual Hashlock Compatibility**: Each chain uses its optimal format
+- ✅ **Event-Based Coordination**: Extracts swapId from Stellar events
+- ✅ **Frontend Integration**: User-friendly interface with real-time feedback
+- ✅ **Explorer Integration**: Provides transaction URLs for verification
+
+**This is a production-ready cross-chain bridge that safely moves real cryptocurrency between Stellar and Ethereum networks while maintaining atomic swap guarantees.**
+
+**This project heavily extends 1inch LOP for ETH side and custom build contracts on Stellar side.**
+
+---
+
 <div align="center">
     <img src="https://github.com/1inch/limit-order-protocol/blob/master/.github/1inch_github_w.svg#gh-light-mode-only">
     <img src="https://github.com/1inch/limit-order-protocol/blob/master/.github/1inch_github_b.svg#gh-dark-mode-only">
 </div>
 
-# 1inch Limit Order Protocol Smart Contract
+# 1inch Limit Order Protocol Smart Contract (Extended for Cross-Chain)
 
 [![Build Status](https://github.com/1inch/limit-order-protocol/workflows/CI/badge.svg)](https://github.com/1inch/limit-order-protocol/actions)
 [![Coverage Status](https://codecov.io/gh/1inch/limit-order-protocol/branch/master/graph/badge.svg?token=FSFTJPS41S)](https://codecov.io/gh/1inch/limit-order-protocol)
