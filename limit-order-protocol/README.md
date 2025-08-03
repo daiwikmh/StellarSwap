@@ -205,20 +205,20 @@ Plenty of utils that helps create & sign orders are available in our typescript 
 - **WETH Address**: `0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2`
 
 **Stellar (Testnet):**
-- **Stellar HTLC Contract**: `CAHJGCOJHEX43V3YW3B777L5DMQW3LOEORXLT42BO6BNXD7SRZYIGYSH`
+- **Stellar HTLC Contract**: [`CAHJGCOJHEX43V3YW3B777L5DMQW3LOEORXLT42BO6BNXD7SRZYIGYSH`](https://stellar.expert/explorer/testnet/search?term=CAHJGCOJHEX43V3YW3B777L5DMQW3LOEORXLT42BO6BNXD7SRZYIGYSH)
 - **Native XLM**: Stellar Lumens (XLM)
 
 #### **Wallet Addresses**
-- **Ethereum Relayer**: `0x1029BBd9B780f449EBD6C74A615Fe0c04B61679c`
-- **Ethereum User**: `0x9e1747D602cBF1b1700B56678F4d8395a9755235`
-- **Stellar Source**: `GBJDZIKRY6KI7U7FETQWBAKNOPRW6NJEAO6WM2MQ3OOGOWOYXZYHG6B3`
-- **Stellar Receiver**: `GCRFJ72PLMERENWP2AGIEZOSZKEU4CLS27PKGFFZUE3EKSYDP36EOJC3`
+- **Ethereum Relayer**: [`0x1029BBd9B780f449EBD6C74A615Fe0c04B61679c`](https://holesky.etherscan.io/address/0x1029BBd9B780f449EBD6C74A615Fe0c04B61679c)
+- **Ethereum User**: [`0x9e1747D602cBF1b1700B56678F4d8395a9755235`](https://holesky.etherscan.io/address/0x9e1747D602cBF1b1700B56678F4d8395a9755235)
+- **Stellar Source**: [`GBJDZIKRY6KI7U7FETQWBAKNOPRW6NJEAO6WM2MQ3OOGOWOYXZYHG6B3`](https://stellar.expert/explorer/testnet/account/GBJDZIKRY6KI7U7FETQWBAKNOPRW6NJEAO6WM2MQ3OOGOWOYXZYHG6B3)
+- **Stellar Receiver**: [`GCRFJ72PLMERENWP2AGIEZOSZKEU4CLS27PKGFFZUE3EKSYDP36EOJC3`](https://stellar.expert/explorer/testnet/account/GCRFJ72PLMERENWP2AGIEZOSZKEU4CLS27PKGFFZUE3EKSYDP36EOJC3)
 
 #### **Network Infrastructure**
-- **Ethereum RPC**: `https://1rpc.io/holesky`
-- **Stellar RPC**: `https://soroban-testnet.stellar.org`
-- **Ethereum Explorer**: `https://holesky.etherscan.io`
-- **Stellar Explorer**: `https://stellar.expert/explorer/testnet`
+- **Ethereum RPC**: [`https://1rpc.io/holesky`](https://1rpc.io/holesky)
+- **Stellar RPC**: [`https://soroban-testnet.stellar.org`](https://soroban-testnet.stellar.org)
+- **Ethereum Explorer**: [`https://holesky.etherscan.io`](https://holesky.etherscan.io)
+- **Stellar Explorer**: [`https://stellar.expert/explorer/testnet`](https://stellar.expert/explorer/testnet)
 
 ### 🔄 Complete Cross-Chain Execution Flow
 

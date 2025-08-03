@@ -2,7 +2,7 @@
 
 ## 🚀 Project Overview
 
-**CROSSINCH+ BRIDGE** is a production-ready cross-chain atomic swap protocol that integrates **1inch Limit Order Protocol** with **custom Stellar HTLC contracts** to enable secure, trustless token transfers between Ethereum and Stellar networks. This project heavily extends 1inch LOP for the ETH side and features custom-built contracts on the Stellar side.
+**CROSSINCH+ BRIDGE** is a cross-chain atomic swap protocol that integrates **1inch Limit Order Protocol** with **custom Stellar HTLC contracts** to enable secure, trustless token transfers between Ethereum and Stellar networks. This project heavily extends 1inch LOP for the ETH side and features custom-built contracts on the Stellar side.
 
 ## 📈 What We Created
 
@@ -97,20 +97,20 @@ We've built a complete real cross-chain bridge that performs **actual token tran
 - **WETH Address**: `0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2`
 
 **Stellar (Testnet):**
-- **Stellar HTLC Contract**: `CAHJGCOJHEX43V3YW3B777L5DMQW3LOEORXLT42BO6BNXD7SRZYIGYSH`
+- **Stellar HTLC Contract**: [`CAHJGCOJHEX43V3YW3B777L5DMQW3LOEORXLT42BO6BNXD7SRZYIGYSH`](https://stellar.expert/explorer/testnet/search?term=CAHJGCOJHEX43V3YW3B777L5DMQW3LOEORXLT42BO6BNXD7SRZYIGYSH)
 - **Native XLM**: Stellar Lumens (XLM)
 
 ### **Wallet Addresses**
-- **Ethereum Relayer**: `0x1029BBd9B780f449EBD6C74A615Fe0c04B61679c`
-- **Ethereum User**: `0x9e1747D602cBF1b1700B56678F4d8395a9755235`
-- **Stellar Source**: `GBJDZIKRY6KI7U7FETQWBAKNOPRW6NJEAO6WM2MQ3OOGOWOYXZYHG6B3`
-- **Stellar Receiver**: `GCRFJ72PLMERENWP2AGIEZOSZKEU4CLS27PKGFFZUE3EKSYDP36EOJC3`
+- **Ethereum Relayer**: [`0x1029BBd9B780f449EBD6C74A615Fe0c04B61679c`](https://holesky.etherscan.io/address/0x1029BBd9B780f449EBD6C74A615Fe0c04B61679c)
+- **Ethereum User**: [`0x9e1747D602cBF1b1700B56678F4d8395a9755235`](https://holesky.etherscan.io/address/0x9e1747D602cBF1b1700B56678F4d8395a9755235)
+- **Stellar Source**: [`GBJDZIKRY6KI7U7FETQWBAKNOPRW6NJEAO6WM2MQ3OOGOWOYXZYHG6B3`](https://stellar.expert/explorer/testnet/account/GBJDZIKRY6KI7U7FETQWBAKNOPRW6NJEAO6WM2MQ3OOGOWOYXZYHG6B3)
+- **Stellar Receiver**: [`GCRFJ72PLMERENWP2AGIEZOSZKEU4CLS27PKGFFZUE3EKSYDP36EOJC3`](https://stellar.expert/explorer/testnet/account/GCRFJ72PLMERENWP2AGIEZOSZKEU4CLS27PKGFFZUE3EKSYDP36EOJC3)
 
 ### **Network Infrastructure**
-- **Ethereum RPC**: `https://1rpc.io/holesky`
-- **Stellar RPC**: `https://soroban-testnet.stellar.org`
-- **Ethereum Explorer**: `https://holesky.etherscan.io`
-- **Stellar Explorer**: `https://stellar.expert/explorer/testnet`
+- **Ethereum RPC**: [`https://1rpc.io/holesky`](https://1rpc.io/holesky)
+- **Stellar RPC**: [`https://soroban-testnet.stellar.org`](https://soroban-testnet.stellar.org)
+- **Ethereum Explorer**: [`https://holesky.etherscan.io`](https://holesky.etherscan.io)
+- **Stellar Explorer**: [`https://stellar.expert/explorer/testnet`](https://stellar.expert/explorer/testnet)
 
 ## 🔄 Complete Cross-Chain Execution Flow
 
@@ -205,9 +205,9 @@ node scripts/real-transfer-test.js
 ## 💡 Key Integration Points
 
 The integration connects:
-- **Your Stellar HTLC** (`CAHJGCOJHEX43V3YW3B777L5DMQW3LOEORXLT42BO6BNXD7SRZYIGYSH`)
-- **HTLC Predicate** (`0xD72f5a8330d6cAFc5F88155B96d8Fb3F871Cce3D`)
-- **1inch LOP** (`0x111111125421ca6dc452d289314280a0f8842a65`)
+- **Your Stellar HTLC** ([`CAHJGCOJHEX43V3YW3B777L5DMQW3LOEORXLT42BO6BNXD7SRZYIGYSH`](https://stellar.expert/explorer/testnet/search?term=CAHJGCOJHEX43V3YW3B777L5DMQW3LOEORXLT42BO6BNXD7SRZYIGYSH))
+- **HTLC Predicate** ([`0xD72f5a8330d6cAFc5F88155B96d8Fb3F871Cce3D`](https://holesky.etherscan.io/address/0xD72f5a8330d6cAFc5F88155B96d8Fb3F871Cce3D))
+- **1inch LOP** ([`0x111111125421ca6dc452d289314280a0f8842a65`](https://holesky.etherscan.io/address/0x111111125421ca6dc452d289314280a0f8842a65))
 - **Your existing keys and RPC endpoints**
 
 ## 🎯 Use Cases
@@ -219,4 +219,4 @@ The integration connects:
 5. **Bridge Infrastructure**: Foundation for multi-chain DeFi protocols
 ---
 
-**This is a production-ready cross-chain bridge that safely moves real cryptocurrency between Stellar and Ethereum networks while maintaining atomic swap guarantees.**
+**This is a cross-chain bridge that safely moves real cryptocurrency between Stellar and Ethereum networks while maintaining atomic swap guarantees.**
