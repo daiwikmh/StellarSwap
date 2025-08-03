@@ -15,7 +15,7 @@ We've built a complete  cross-chain bridge that performs **actual token transfer
 
 ### 🎯 What Actually Happens
 
-1. ** Cross-Chain Bridge**: Moves actual tokens (XLM ↔ ETH) between Stellar and Ethereum
+1. **Cross-Chain Bridge**: Moves actual tokens (XLM ↔ ETH) between Stellar and Ethereum
 2. **Atomic Safety**: Guarantees either both transfers complete or both fail - no stuck funds
 3. **Frontend Integration**: React interface for user-friendly swap execution
 4. **Bridge Server**: Node.js backend that coordinates cross-chain operations
@@ -36,8 +36,8 @@ We've built a complete  cross-chain bridge that performs **actual token transfer
 
 ###  Cross-Chain Script (`limit-order-protocol/scripts/complete--bridge.js`)
 - **Dual Hashlock System**: Ethereum uses keccak256(UTF-8), Stellar uses SHA256(hex)
-- ** Stellar HTLC**: Actual XLM contract locking with proper event extraction
-- ** Ethereum Transfers**: Actual ETH transfers with predicate validation
+- **Stellar HTLC**: Actual XLM contract locking with proper event extraction
+- **Ethereum Transfers**: Actual ETH transfers with predicate validation
 - **Consistent Preimage Handling**: Each chain uses its native format
 
 ### 🏗️ Architecture
@@ -83,7 +83,7 @@ We've built a complete  cross-chain bridge that performs **actual token transfer
 
 ## 🛡️ Safety & Features
 
-- ✅ ** Token Transfers**: No simulations - actual XLM and ETH movement
+- ✅ **Token Transfers**: No simulations - actual XLM and ETH movement
 - ✅ **Atomic Safety**: Either both sides complete or both fail
 - ✅ **Dual Hashlock Compatibility**: Each chain uses its optimal format
 - ✅ **Event-Based Coordination**: Extracts swapId from Stellar events
@@ -208,5 +208,6 @@ The integration connects:
 ---
 
 
-**This is a cross-chain bridge that safely moves  cryptocurrency between Stellar and Ethereum networks while maintaining atomic swap guarantees.**
+**This is a cross-chain bridge that safely moves  cryptocurrency between Stellar and Ethereum networks while maintaining atomic swap based on 1inch and stellar**
+
 
