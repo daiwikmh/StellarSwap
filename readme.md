@@ -23,7 +23,7 @@ We've built a complete  cross-chain bridge that performs **actual token transfer
 ## 🏗️ Key Components
 
 ### Frontend Interface (`testing/src/components/`)
-- **Swap interface** with  crypto logos (ETH/Stellar)
+- Swap interface with  crypto logos (ETH/Stellar)
 - **-time price calculation** and conversion
 - **Execute button** triggers actual bridge operations
 - **Dynamic transaction tracking** with live explorer links
@@ -209,3 +209,4 @@ The integration connects:
 
 
 **This is a cross-chain bridge that safely moves  cryptocurrency between Stellar and Ethereum networks while maintaining atomic swap guarantees.**
+
