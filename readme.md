@@ -37,6 +37,21 @@ We've built a complete real cross-chain bridge that performs **actual token tran
 - **Real Ethereum Transfers**: Actual ETH transfers with predicate validation
 - **Consistent Preimage Handling**: Each chain uses its native format
 
+### 🏗️ Architecture
+
+```
+🌟 STELLAR NETWORK          🌉 BRIDGE LOGIC          ⚡ ETHEREUM NETWORK
+┌─────────────────┐         ┌─────────────────┐         ┌─────────────────┐
+│  Stellar HTLC   │────────▶│  HTLC Predicate │────────▶│  1inch LOP v4   │
+│   Contract      │         │   Validator     │         │   Protocol      │
+└─────────────────┘         └─────────────────┘         └─────────────────┘
+        │                            │                            │
+        ▼                            ▼                            ▼
+   XLM Deposits              Secret Validation               ETH Transfers
+   Secret Reveal            Order Hash Matching             Limit Order Fill
+```
+
+
 ## 🔧 Technical Architecture
 
 ### Flow: Frontend → Bridge Server → Cross-Chain Script → Blockchain Contracts
@@ -202,17 +217,6 @@ The integration connects:
 3. **Cross-Chain DApps**: Enable applications spanning multiple blockchains
 4. **Institutional Trading**: Large volume cross-chain swaps with limit order benefits
 5. **Bridge Infrastructure**: Foundation for multi-chain DeFi protocols
-
-## 🔮 Future Roadmap
-
-- **Multi-Chain Support**: Add Bitcoin, Polygon, Arbitrum
-- **Advanced Order Types**: Dutch auctions, range orders across chains
-- **Governance Integration**: DAO-controlled bridge parameters
-- **Mobile SDK**: React Native integration for mobile apps
-- **Institutional API**: High-volume trading interfaces
-
 ---
 
 **This is a production-ready cross-chain bridge that safely moves real cryptocurrency between Stellar and Ethereum networks while maintaining atomic swap guarantees.**
-
-*Built with ❤️ using 1inch Limit Order Protocol v4 extended for cross-chain functionality*
