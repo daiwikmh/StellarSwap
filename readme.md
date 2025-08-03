@@ -1,4 +1,4 @@
-# 🌉 CROSSINCH+ BRIDGE - Real Cross-Chain Atomic Swap Bridge
+# 🌉 CROSSINCH+ BRIDGE -  Cross-Chain Atomic Swap Bridge
 
 ## 🚀 Project Overview
 
@@ -6,13 +6,13 @@
 
 ## 📈 What We Created
 
-### ⚡ Real Cross-Chain Atomic Swap Bridge
+### ⚡  Cross-Chain Atomic Swap Bridge
 
-We've built a complete real cross-chain bridge that performs **actual token transfers** between Stellar and Ethereum networks using atomic swap technology.
+We've built a complete  cross-chain bridge that performs **actual token transfers** between Stellar and Ethereum networks using atomic swap technology.
 
 ### 🎯 What Actually Happens
 
-1. **Real Cross-Chain Bridge**: Moves actual tokens (XLM ↔ ETH) between Stellar and Ethereum
+1. ** Cross-Chain Bridge**: Moves actual tokens (XLM ↔ ETH) between Stellar and Ethereum
 2. **Atomic Safety**: Guarantees either both transfers complete or both fail - no stuck funds
 3. **Frontend Integration**: React interface for user-friendly swap execution
 4. **Bridge Server**: Node.js backend that coordinates cross-chain operations
@@ -20,8 +20,8 @@ We've built a complete real cross-chain bridge that performs **actual token tran
 ## 🏗️ Key Components
 
 ### Frontend Interface (`testing/src/components/`)
-- **Swap interface** with real crypto logos (ETH/Stellar)
-- **Real-time price calculation** and conversion
+- **Swap interface** with  crypto logos (ETH/Stellar)
+- **-time price calculation** and conversion
 - **Execute button** triggers actual bridge operations
 - **Dynamic transaction tracking** with live explorer links
 
@@ -29,12 +29,12 @@ We've built a complete real cross-chain bridge that performs **actual token tran
 - **Receives swap requests** from frontend
 - **Spawns cross-chain scripts** with dynamic parameters
 - **Returns transaction hashes** and explorer URLs
-- **Real-time parsing** of bridge execution results
+- **-time parsing** of bridge execution results
 
-### Real Cross-Chain Script (`limit-order-protocol/scripts/complete-real-bridge.js`)
+###  Cross-Chain Script (`limit-order-protocol/scripts/complete--bridge.js`)
 - **Dual Hashlock System**: Ethereum uses keccak256(UTF-8), Stellar uses SHA256(hex)
-- **Real Stellar HTLC**: Actual XLM contract locking with proper event extraction
-- **Real Ethereum Transfers**: Actual ETH transfers with predicate validation
+- ** Stellar HTLC**: Actual XLM contract locking with proper event extraction
+- ** Ethereum Transfers**: Actual ETH transfers with predicate validation
 - **Consistent Preimage Handling**: Each chain uses its native format
 
 ### 🏗️ Architecture
@@ -58,29 +58,29 @@ We've built a complete real cross-chain bridge that performs **actual token tran
 
 **Stellar Side:**
 - Uses backend's hex preimage format
-- Real contract calls with proper contractInt implementation
+-  contract calls with proper contractInt implementation
 - Event extraction for swapId from blockchain
 - SHA256-based hashlock validation
 
 **Ethereum Side:**
 - Uses standard ethers.js UTF-8 format
 - HTLC predicate registration and validation
-- Real ETH transfers between wallets
+-  ETH transfers between wallets
 - Keccak256-based hashlock validation
 
 ## 💰 What Actually Happens
 
 1. **User enters amounts** in frontend (e.g., 100 XLM → 0.001 ETH)
-2. **Bridge server receives request** and spawns real transfer script
-3. **Stellar**: Real XLM gets locked in HTLC contract
+2. **Bridge server receives request** and spawns  transfer script
+3. **Stellar**:  XLM gets locked in HTLC contract
 4. **Ethereum**: HTLC predicate gets registered with hashlock
 5. **Stellar**: User claims XLM, revealing secret on blockchain
 6. **Ethereum**: User claims ETH using revealed secret
-7. **Result**: Real tokens moved atomically between chains
+7. **Result**:  tokens moved atomically between chains
 
 ## 🛡️ Safety & Features
 
-- ✅ **Real Token Transfers**: No simulations - actual XLM and ETH movement
+- ✅ ** Token Transfers**: No simulations - actual XLM and ETH movement
 - ✅ **Atomic Safety**: Either both sides complete or both fail
 - ✅ **Dual Hashlock Compatibility**: Each chain uses its optimal format
 - ✅ **Event-Based Coordination**: Extracts swapId from Stellar events
@@ -219,4 +219,4 @@ The integration connects:
 5. **Bridge Infrastructure**: Foundation for multi-chain DeFi protocols
 ---
 
-**This is a cross-chain bridge that safely moves real cryptocurrency between Stellar and Ethereum networks while maintaining atomic swap guarantees.**
+**This is a cross-chain bridge that safely moves  cryptocurrency between Stellar and Ethereum networks while maintaining atomic swap guarantees.**
