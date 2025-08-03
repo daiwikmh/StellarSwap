@@ -6,6 +6,9 @@
 
 ## 📈 What We Created
 
+![Cross-Chain Swap Architecture](testing/public/path.png)
+
+
 ### ⚡  Cross-Chain Atomic Swap Bridge
 
 We've built a complete  cross-chain bridge that performs **actual token transfers** between Stellar and Ethereum networks using atomic swap technology.
@@ -115,37 +118,22 @@ We've built a complete  cross-chain bridge that performs **actual token transfer
 ## 🔄 Complete Cross-Chain Execution Flow
 
 ```mermaid
-graph TD
-    A[🖥️ Frontend Interface] --> B[💰 User Enters Amount]
-    B --> C[📊 Real-time Price Calculation]
-    C --> D[🔄 Execute Swap Button]
-    
-    D --> E[🌉 Bridge Server]
-    E --> F[📋 Spawn Cross-Chain Script]
-    F --> G[🔐 Generate Dual Hashlocks]
-    
-    G --> H[⭐ Stellar HTLC Initiate]
-    G --> I[⚡ Ethereum Predicate Register]
-    
-    H --> J[🔍 Extract Swap ID from Events]
-    I --> K[✅ Hashlock Validation Setup]
-    
-    J --> L[⭐ Stellar HTLC Claim]
-    L --> M[🗝️ Secret Revealed on Blockchain]
-    
-    M --> N[⚡ Ethereum Claim with Secret]
-    N --> O[✅ Real ETH Transfer Executed]
-    
-    O --> P[🎉 Atomic Swap Complete]
-    P --> Q[🔗 Explorer URLs Returned]
-    Q --> R[📱 Frontend Shows Success]
-
-    style A fill:#e1f5fe
-    style P fill:#c8e6c9
-    style H fill:#fff3e0
-    style I fill:#f3e5f5
-    style M fill:#ffebee
+graph LR
+    A[👤 User] --> B[🌉 Bridge]
+    B --> C[⭐ Stellar HTLC]
+    B --> D[⚡ Ethereum LOP]
+    C --> E[🔓 Secret Reveal]
+    E --> F[✅ Complete]
+    D --> F
 ```
+
+1. **User inputs swap** (e.g., 100 XLM → 0.001 ETH) in React frontend.
+2. **Bridge server receives request**, spawns cross-chain script.
+3. **LimitBuilder constructs HTLC parameters** (hashlock, timelock).
+4. **Stellar locks XLM in HTLC** (SHA256).
+5. **Ethereum registers HTLC predicate via OneInch LOP** (keccak256).
+6. **User reveals secret on Stellar**, claims XLM.
+7. **Secret unlocks ETH on Ethereum**, completing atomic swap.
 
 ## 🛠️ Technology Stack
 
