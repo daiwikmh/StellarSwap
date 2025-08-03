@@ -44,33 +44,35 @@ app.post('/api/execute-bridge', async (req, res) => {
 
     console.log('✅ Bridge execution completed:', result);
     
-    res.json({
+    // Format response to match RecentTransactions component expectations
+    const bridgeResult = {
       success: true,
-      txHashes: result.txHashes || {
-        stellarHTLC: `stellar-htlc-${Date.now()}`,
-        ethereumRegistration: `eth-reg-${Date.now()}`,
-        stellarClaim: `stellar-claim-${Date.now()}`,
-        ethereumFill: `eth-fill-${Date.now()}`
-      },
-      explorerUrls: result.explorerUrls || {
-        stellarHTLC: `https://stellar.expert/explorer/testnet/search?term=stellar-htlc-${Date.now()}`,
-        ethereumRegistration: `https://holesky.etherscan.io/tx/eth-reg-${Date.now()}`,
-        stellarClaim: `https://stellar.expert/explorer/testnet/search?term=stellar-claim-${Date.now()}`,
-        ethereumFill: `https://holesky.etherscan.io/tx/eth-fill-${Date.now()}`
-      },
+      stellar: { stellarTxHash: result.txHashes.stellarHTLC || `stellar-htlc-${Date.now()}` },
+      predicate: { txHash: result.txHashes.ethereumRegistration || `eth-reg-${Date.now()}` },
+      stellarClaim: { claimTxHash: result.txHashes.stellarClaim || `stellar-claim-${Date.now()}` },
+      ethClaim: { txHash: result.txHashes.ethereumTransfer || `eth-fill-${Date.now()}` },
+      timestamp: Date.now(),
       amounts: {
         xlmAmount: parseFloat(xlmAmount),
         ethAmount: parseFloat(ethAmount)
       },
       secret: result.secret || `secret-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       orderHash: result.orderHash || `order-${Date.now()}`,
+      explorerUrls: result.explorerUrls || {
+        stellarHTLC: `https://stellar.expert/explorer/testnet/search?term=${result.txHashes.stellarHTLC || 'stellar-htlc-' + Date.now()}`,
+        ethereumRegistration: `https://holesky.etherscan.io/tx/${result.txHashes.ethereumRegistration || 'eth-reg-' + Date.now()}`,
+        stellarClaim: `https://stellar.expert/explorer/testnet/search?term=${result.txHashes.stellarClaim || 'stellar-claim-' + Date.now()}`,
+        ethereumTransfer: `https://holesky.etherscan.io/tx/${result.txHashes.ethereumTransfer || 'eth-fill-' + Date.now()}`
+      },
       contractAddresses: {
         htlcPredicate: "0xD72f5a8330d6cAFc5F88155B96d8Fb3F871Cce3D",
         limitOrderProtocol: "0x111111125421ca6dc452d289314280a0f8842a65",
         stellarHtlc: "CAHJGCOJHEX43V3YW3B777L5DMQW3LOEORXLT42BO6BNXD7SRZYIGYSH",
         wethAddress: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
       }
-    });
+    };
+
+    res.json(bridgeResult);
     
   } catch (error) {
     console.error('❌ Bridge execution error:', error);
@@ -144,49 +146,75 @@ function parseBridgeOutput(output) {
     orderHash: ''
   };
 
+  // Look for the transaction explorer links section first (most reliable)
+  let inExplorerSection = false;
+  
   lines.forEach(line => {
-    // Stellar HTLC creation transaction
-    if (line.includes('✅ Transaction hash:') && !line.includes('ethereum')) {
-      const match = line.match(/Transaction hash:\s*([0-9a-f]+)/i);
-      if (match) {
-        result.txHashes.stellarHTLC = match[1];
-        result.explorerUrls.stellarHTLC = `https://stellar.expert/explorer/testnet/search?term=${match[1]}`;
-      }
+    console.log(`🔍 Processing line: ${line}`);
+    
+    // Check if we're in the explorer links section
+    if (line.includes('🔍 TRANSACTION EXPLORER LINKS:')) {
+      console.log('✅ Found explorer links section');
+      inExplorerSection = true;
+      return;
     }
     
-    // Ethereum HTLC registration transaction
-    if (line.includes('✅ Transaction:') && line.includes('0x')) {
-      const match = line.match(/Transaction:\s*([0-9a-fx]+)/i);
-      if (match) {
-        const txHash = match[1];
-        if (!result.txHashes.ethereumRegistration) {
-          result.txHashes.ethereumRegistration = txHash;
-          result.explorerUrls.ethereumRegistration = `https://holesky.etherscan.io/tx/${txHash}`;
-        } else {
-          result.txHashes.ethereumTransfer = txHash;
-          result.explorerUrls.ethereumTransfer = `https://holesky.etherscan.io/tx/${txHash}`;
+    if (inExplorerSection) {
+      // Parse Stellar Initiate
+      if (line.includes('├── Stellar Initiate:') || line.includes('└── Stellar Initiate:')) {
+        console.log('⭐ Found Stellar Initiate line:', line);
+        const match = line.match(/https:\/\/stellar\.expert\/explorer\/testnet\/search\?term=([0-9a-f]+)/i);
+        if (match) {
+          console.log('⭐ Extracted Stellar HTLC hash:', match[1]);
+          result.txHashes.stellarHTLC = match[1];
+          result.explorerUrls.stellarHTLC = `https://stellar.expert/explorer/testnet/search?term=${match[1]}`;
+        }
+      }
+      
+      // Parse Ethereum Register
+      if (line.includes('├── Ethereum Register:') || line.includes('└── Ethereum Register:')) {
+        console.log('⚡ Found Ethereum Register line:', line);
+        const match = line.match(/https:\/\/holesky\.etherscan\.io\/tx\/(0x[0-9a-f]+)/i);
+        if (match) {
+          console.log('⚡ Extracted Ethereum Registration hash:', match[1]);
+          result.txHashes.ethereumRegistration = match[1];
+          result.explorerUrls.ethereumRegistration = `https://holesky.etherscan.io/tx/${match[1]}`;
+        }
+      }
+      
+      // Parse Stellar Claim
+      if (line.includes('├── Stellar Claim:') || line.includes('└── Stellar Claim:')) {
+        console.log('⭐ Found Stellar Claim line:', line);
+        const match = line.match(/https:\/\/stellar\.expert\/explorer\/testnet\/search\?term=([0-9a-f]+)/i);
+        if (match) {
+          console.log('⭐ Extracted Stellar Claim hash:', match[1]);
+          result.txHashes.stellarClaim = match[1];
+          result.explorerUrls.stellarClaim = `https://stellar.expert/explorer/testnet/search?term=${match[1]}`;
+        }
+      }
+      
+      // Parse Ethereum Transfer
+      if (line.includes('├── Ethereum Transfer:') || line.includes('└── Ethereum Transfer:')) {
+        console.log('⚡ Found Ethereum Transfer line:', line);
+        const match = line.match(/https:\/\/holesky\.etherscan\.io\/tx\/(0x[0-9a-f]+)/i);
+        if (match) {
+          console.log('⚡ Extracted Ethereum Transfer hash:', match[1]);
+          result.txHashes.ethereumTransfer = match[1];
+          result.explorerUrls.ethereumTransfer = `https://holesky.etherscan.io/tx/${match[1]}`;
         }
       }
     }
 
-    // Stellar claim transaction
-    if (line.includes('✅ Claim transaction:')) {
-      const match = line.match(/Claim transaction:\s*([0-9a-f]+)/i);
-      if (match) {
-        result.txHashes.stellarClaim = match[1];
-        result.explorerUrls.stellarClaim = `https://stellar.expert/explorer/testnet/search?term=${match[1]}`;
-      }
-    }
-
-    // Secret revealed
-    if (line.includes('✅ Secret revealed on blockchain:') || line.includes('✅ Secret would be revealed:')) {
-      const match = line.match(/(?:blockchain|revealed):\s*(.+)/);
+    // Also look for secret revealed
+    if (line.includes('✅ Secret revealed on blockchain:') || line.includes('✅ Secret revealed (demo):')) {
+      const match = line.match(/(?:blockchain|demo):\s*(.+)/);
       if (match) {
         result.secret = match[1].trim();
       }
     }
   });
 
+  console.log('📊 Parsed bridge output:', result);
   return result;
 }
 

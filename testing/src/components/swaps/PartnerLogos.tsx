@@ -1,5 +1,3 @@
-"use client"
-
 interface Partner {
   name: string
   symbol: string
@@ -8,14 +6,7 @@ interface Partner {
 const partnerLogos: Partner[] = [
   { name: "Ethereum", symbol: "Ξ" },
   { name: "Stellar", symbol: "★" },
-  { name: "Bitcoin", symbol: "₿" },
-  { name: "Polygon", symbol: "◊" },
-  { name: "Avalanche", symbol: "▲" },
-  { name: "Solana", symbol: "◉" },
-  { name: "Cardano", symbol: "₳" },
-  { name: "Chainlink", symbol: "⬢" },
-  { name: "Uniswap", symbol: "🦄" },
-  { name: "Compound", symbol: "◯" },
+  { name: "1INCH", symbol: "◊" },
 ]
 
 export default function PartnerLogos() {

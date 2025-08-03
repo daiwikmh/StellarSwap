@@ -5,6 +5,7 @@ import { ArrowUpDown, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { addBridgeResult } from "./RecentTransactions"
 // API configuration
 const API_BASE_URL = import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:3001'
 const BRIDGE_API_URL = import.meta.env.REACT_APP_BRIDGE_URL || 'http://localhost:3002'
@@ -145,10 +146,11 @@ export default function SwapInterface({ onSwapExecute }: SwapInterfaceProps) {
       if (swapResult.success) {
         console.log('🎉 LIVE CROSS-CHAIN ATOMIC SWAP COMPLETED!')
         console.log('═══════════════════════════════════════════════════')
-        console.log('📋 Transaction Hashes:')
-        Object.entries(swapResult.txHashes).forEach(([key, hash]) => {
-          console.log(`  ${key}: ${hash}`)
-        })
+        console.log('📋 Transaction Details:')
+        console.log(`  Stellar Initiate: ${swapResult.stellar?.stellarTxHash}`)
+        console.log(`  Ethereum Register: ${swapResult.predicate?.txHash}`)
+        console.log(`  Stellar Claim: ${swapResult.stellarClaim?.claimTxHash}`)
+        console.log(`  Ethereum Transfer: ${swapResult.ethClaim?.txHash}`)
         console.log('🔍 Explorer URLs:')
         Object.entries(swapResult.explorerUrls).forEach(([key, url]) => {
           console.log(`  ${key}: ${url}`)
@@ -164,6 +166,9 @@ export default function SwapInterface({ onSwapExecute }: SwapInterfaceProps) {
           console.log(`  ${key}: ${address}`)
         })
         console.log('═══════════════════════════════════════════════════')
+        
+        // Add result to transaction history
+        addBridgeResult(swapResult)
       } else {
         console.error('❌ Cross-chain swap failed:', swapResult.error)
         throw new Error(swapResult.error || 'Unknown swap error')

@@ -35,7 +35,7 @@ class CompleteRealBridge {
         this.htlcPredicateAddress = process.env.HTLC_PREDICATE_ADDRESS;
         this.stellarHtlcAddress = process.env.STELLAR_HTLC_ADDRESS;
         
-        console.log("🔧 Complete Real Bridge Configuration:");
+        console.log("🔧 CROSSINCH+ Bridge Configuration:");
         console.log("Ethereum RPC:", process.env.ETHEREUM_RPC_URL);
         console.log("Stellar RPC:", process.env.STELLAR_RPC_URL);
         console.log("Relayer:", this.relayerWallet.address);
@@ -46,8 +46,8 @@ class CompleteRealBridge {
         console.log("Stellar HTLC:", this.stellarHtlcAddress);
     }
     
-    async executeRealCrossChainSwap() {
-        console.log("\n🌉 REAL CROSS-CHAIN ATOMIC SWAP");
+    async executeCrossChainSwap() {
+        console.log("\n🌉 CROSS-CHAIN ATOMIC SWAP EXECUTION");
         console.log("═══════════════════════════════════════");
         
         try {
@@ -86,31 +86,31 @@ class CompleteRealBridge {
             // Step 1: Record initial balances
             await this.recordBalances("INITIAL");
             
-            // Step 2: Create REAL Stellar HTLC
-            console.log("\n1️⃣ Creating REAL Stellar HTLC...");
-            const stellarResult = await this.createRealStellarHTLC(xlmAmount, stellarHashlock, timelock, secret);
+            // Step 2: Create Stellar HTLC
+            console.log("\n1️⃣ Initiating Stellar HTLC Contract...");
+            const stellarResult = await this.createStellarHTLC(xlmAmount, stellarHashlock, timelock, secret);
             
             // Step 3: Register with Ethereum HTLC Predicate
             console.log("\n2️⃣ Registering with Ethereum HTLC Predicate...");
             const predicateResult = await this.registerEthereumHTLC(stellarResult.orderHash, ethereumHashlock, timelock);
             
-            // Step 4: User claims REAL Stellar HTLC (reveals secret)
-            console.log("\n3️⃣ User claims REAL Stellar HTLC...");
-            const claimResult = await this.claimRealStellarHTLC(stellarResult, secret);
+            // Step 4: User claims Stellar HTLC (reveals secret)
+            console.log("\n3️⃣ Claiming Stellar HTLC with Secret...");
+            const claimResult = await this.claimStellarHTLC(stellarResult, secret);
             
-            // Step 5: User claims REAL Ethereum with revealed secret
-            console.log("\n4️⃣ User claims REAL Ethereum with revealed secret...");
-            const ethClaimResult = await this.claimRealEthereum(predicateResult, claimResult.revealedSecret, ethAmount);
+            // Step 5: User claims Ethereum with revealed secret
+            console.log("\n4️⃣ Claiming Ethereum with Revealed Secret...");
+            const ethClaimResult = await this.claimEthereum(predicateResult, claimResult.revealedSecret, ethAmount);
             
             // Step 6: Final balance verification
             await this.recordBalances("FINAL");
             
-            console.log("\n🎉 REAL CROSS-CHAIN ATOMIC SWAP COMPLETED!");
+            console.log("\n🏆 CROSSINCH+ BRIDGE - ATOMIC SWAP COMPLETED SUCCESSFULLY!");
             console.log("═══════════════════════════════════════");
-            console.log("✅ Stellar HTLC: REAL CONTRACT EXECUTED");
-            console.log("✅ Ethereum HTLC: REAL CONTRACT EXECUTED");
-            console.log("✅ XLM Transfer: REAL TOKENS MOVED");
-            console.log("✅ ETH Transfer: REAL TOKENS MOVED");
+            console.log("✅ Stellar HTLC: CONTRACT EXECUTED");
+            console.log("✅ Ethereum HTLC: PREDICATE VALIDATED");
+            console.log("✅ XLM Transfer: TOKENS MOVED");
+            console.log("✅ ETH Transfer: TOKENS MOVED");
             console.log("✅ Atomic Safety: GUARANTEED");
             
             return {
@@ -161,8 +161,14 @@ class CompleteRealBridge {
         return { relayerBalance, userBalance, phase };
     }
     
-    async createRealStellarHTLC(amount, hashlock, timelock, secret) {
-        console.log(`Creating REAL Stellar HTLC for ${amount} XLM...`);
+    async createStellarHTLC(amount, hashlock, timelock, secret) {
+        console.log(`\n⭐ INITIATING STELLAR HTLC CONTRACT:`);
+        console.log(`┌───────────────────────────────────────────────────────────────┐`);
+        console.log(`│ Contract Address: ${this.stellarHtlcAddress} │`);
+        console.log(`│ Amount: ${amount} XLM (${Math.floor(amount * 10000000)} stroops) │`);
+        console.log(`│ Sender: ${this.stellarSource.publicKey()} │`);
+        console.log(`│ Receiver: ${this.stellarReceiver.publicKey()} │`);
+        console.log(`└───────────────────────────────────────────────────────────────┘`);
         
         // Generate preimage first (outside try block for proper scope)
         const encoder = new TextEncoder();
@@ -198,7 +204,13 @@ class CompleteRealBridge {
             ]);
 
             if (result.success && result.hash) {
-                console.log("✅ REAL Stellar HTLC created successfully!");
+                console.log("\n🎉 STELLAR HTLC SUCCESSFULLY CREATED!");
+                console.log("┌───────────────────────────────────────────────────────────────┐");
+                console.log("│ ✅ Status: SUCCESS │");
+                console.log(`│ ✅ Transaction Hash: ${result.hash} │`);
+                console.log(`│ ✅ Ledger: ${result.latestLedger} │`);
+                console.log(`│ ✅ XLM Locked: ${amount} │`);
+                console.log("└───────────────────────────────────────────────────────────────┘");
                 console.log("✅ Transaction hash:", result.hash);
                 console.log("✅ XLM locked in contract:", amount);
                 console.log("✅ Ledger:", result.latestLedger);
@@ -532,8 +544,12 @@ class CompleteRealBridge {
         return nativeToScVal(bytes, { type: "bytes" });
     }
     
-    async claimRealStellarHTLC(stellarResult, secret) {
-        console.log("User claiming REAL Stellar HTLC with secret...");
+    async claimStellarHTLC(stellarResult, secret) {
+        console.log("\n🏆 CLAIMING STELLAR HTLC:");
+        console.log("┌───────────────────────────────────────────────────────────────┐");
+        console.log(`│ Claimer: ${this.stellarReceiver.publicKey()} │`);
+        console.log(`│ Contract: ${this.stellarHtlcAddress} │`);
+        console.log("└───────────────────────────────────────────────────────────────┘");
         
         try {
             // Check if we have the swapId from the initiate step
@@ -578,7 +594,10 @@ class CompleteRealBridge {
             ]);
             
             if (result.success && result.hash) {
-                console.log("✅ REAL Stellar HTLC claimed!");
+                console.log("\n🎉 STELLAR HTLC CLAIM SUCCESSFUL!");
+                console.log(`✅ Transaction: ${result.hash}`);
+                console.log(`✅ Secret Revealed: ${secret}`);
+                console.log(`✅ XLM Transferred: ${stellarResult.amount}`);
                 console.log("✅ Claim transaction:", result.hash);
                 console.log("✅ Secret revealed on blockchain:", secret);
                 console.log("✅ XLM transferred to user");
@@ -608,8 +627,13 @@ class CompleteRealBridge {
         }
     }
     
-    async claimRealEthereum(predicateResult, revealedSecret, ethAmount) {
-        console.log("User claiming REAL Ethereum with revealed preimage...");
+    async claimEthereum(predicateResult, revealedSecret, ethAmount) {
+        console.log("\n⚡ CLAIMING ETHEREUM TRANSFER:");
+        console.log("┌───────────────────────────────────────────────────────────────┐");
+        console.log(`│ From: ${this.relayerWallet.address} │`);
+        console.log(`│ To: ${this.userWallet.address} │`);
+        console.log(`│ Amount: ${ethAmount} ETH │`);
+        console.log("└───────────────────────────────────────────────────────────────┘");
         
         // Verify preimage with predicate
         const htlcPredicate = new ethers.Contract(
@@ -652,7 +676,10 @@ class CompleteRealBridge {
         
         const receipt = await transferTx.wait();
         
-        console.log("✅ REAL ETH TRANSFER COMPLETED!");
+        console.log("\n🎉 ETHEREUM TRANSFER COMPLETED!");
+        console.log(`✅ Transaction: ${receipt.hash}`);
+        console.log(`✅ Amount: ${ethers.formatEther(transferAmount)} ETH`);
+        console.log(`✅ Gas Used: ${receipt.gasUsed.toString()}`);
         console.log("✅ Transaction:", receipt.hash);
         console.log("✅ Amount transferred:", ethers.formatEther(transferAmount), "ETH");
         console.log("✅ From:", this.relayerWallet.address);
@@ -672,22 +699,28 @@ class CompleteRealBridge {
 }
 
 // Execute real cross-chain bridge
-async function runCompleteRealBridge() {
-    console.log("🌉 COMPLETE REAL CROSS-CHAIN BRIDGE");
+async function runCompleteBridge() {
+    console.log("🌉 CROSSINCH+ BRIDGE EXECUTION");
     console.log("Performing actual transfers on both Stellar and Ethereum");
     console.log("═══════════════════════════════════════");
     
     const bridge = new CompleteRealBridge();
-    const result = await bridge.executeRealCrossChainSwap();
+    const result = await bridge.executeCrossChainSwap();
     
     if (result.success) {
-        console.log("\n🏆 REAL CROSS-CHAIN BRIDGE SUCCESSFUL!");
-        console.log("🔗 Stellar transfers: REAL");
-        console.log("🔗 Ethereum transfers: REAL");
+        console.log("\n🏆 CROSSINCH+ BRIDGE SUCCESSFUL!");
+        console.log("🔗 Stellar transfers: EXECUTED");
+        console.log("🔗 Ethereum transfers: EXECUTED");
         console.log("🎯 Atomic swaps: WORKING");
         console.log("🚀 Bridge: PRODUCTION READY!");
+        
+        console.log("\n🔍 TRANSACTION EXPLORER LINKS:");
+        console.log("├── Stellar Initiate:", `https://stellar.expert/explorer/testnet/search?term=${result.stellar.stellarTxHash}`);
+        console.log("├── Ethereum Register:", `https://holesky.etherscan.io/tx/${result.predicate.txHash}`);
+        console.log("├── Stellar Claim:", `https://stellar.expert/explorer/testnet/search?term=${result.stellarClaim.claimTxHash}`);
+        console.log("└── Ethereum Transfer:", `https://holesky.etherscan.io/tx/${result.ethClaim.txHash}`);
     } else {
-        console.log("\n❌ Real bridge failed:", result.error);
+        console.log("\n❌ Bridge execution failed:", result.error);
     }
     
     return result;
@@ -695,12 +728,12 @@ async function runCompleteRealBridge() {
 
 // Run if called directly
 if (require.main === module) {
-    runCompleteRealBridge()
+    runCompleteBridge()
         .then(() => process.exit(0))
         .catch(error => {
-            console.error("❌ Real bridge execution failed:", error);
+            console.error("❌ Bridge execution failed:", error);
             process.exit(1);
         });
 }
 
-module.exports = { CompleteRealBridge, runCompleteRealBridge };
+module.exports = { CompleteRealBridge, runCompleteBridge };

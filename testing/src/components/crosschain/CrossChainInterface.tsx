@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
+import { addBridgeResult } from "@/components/swaps/RecentTransactions"
 
 interface MarketData {
   ethPrice: number
@@ -359,6 +360,15 @@ export default function CrossChainInterface() {
     console.log('🎉 STELLAR → ETHEREUM SWAP COMPLETED!')
     console.log('📊 Full Results:', result)
     setSwapResult(result)
+    
+    // Add result to bridge transaction history
+    addBridgeResult({
+      stellar: { stellarTxHash: stellarTxHash },
+      predicate: { txHash: ethRegTxHash },
+      stellarClaim: { claimTxHash: stellarClaimTxHash },
+      ethClaim: { txHash: ethFillTxHash },
+      timestamp: Date.now()
+    })
   }
 
   const executeEthToStellarSwap = async () => {
@@ -447,6 +457,15 @@ export default function CrossChainInterface() {
     console.log('🎉 ETHEREUM → STELLAR SWAP COMPLETED!')
     console.log('📊 Full Results:', result)
     setSwapResult(result)
+    
+    // Add result to bridge transaction history
+    addBridgeResult({
+      stellar: { stellarTxHash: stellarFillTxHash },
+      predicate: { txHash: stellarRegTxHash },
+      stellarClaim: { claimTxHash: ethClaimTxHash },
+      ethClaim: { txHash: ethHtlcTxHash },
+      timestamp: Date.now()
+    })
   }
 
   const getStatusIcon = (status: SwapStep["status"]) => {
